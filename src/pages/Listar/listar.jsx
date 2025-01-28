@@ -3,7 +3,7 @@ import api from '../../services/api.js';
 import styled from "styled-components";
 import HeaderTitle from "../../components/HeaderTitle/headerTitle";
 
-const Tr = styled.tr `
+const Tr = styled.tr`
     width: 100%;
 
     & th {
@@ -15,67 +15,34 @@ const Tr = styled.tr `
     }
 `;
 
-const Button = styled.button `
+const Button = styled.button`
     text-align: center;
 `;
 
 function Listar() {
     const [jogador, setJogador] = useState([]);
     const [load, setLoad] = useState(true);
+    const [inputSearch, setInputSearch] = useState('');
+    const [searchFilterList, setSearchFilterList] = useState([]);
+
+    let count = 1;
 
     useEffect(() => {
         api.get('/jogador')
-        .then((response) => {
-            setJogador(response.data);
-            setLoad(false);
-        })
-        .catch((error) => {
-            console.error(`Error: ${error}`);
-            setLoad(false);
-        });
+            .then((response) => {
+                setJogador(response.data);
+                setLoad(false);
+            })
+            .catch((error) => {
+                console.error(`Error: ${error}`);
+                setLoad(false);
+            });
     }, []);
 
-    function renderTbodyLines() {
-        let count = 1;
-
-        if (load) {
-            return (
-                <Tr>
-                    <td colSpan="7">Loading ...</td>
-                </Tr>
-            );
-        }
-
-        return (
-            <>
-                {jogador.map((jog) => (
-                    <Tr key={jog.id}>
-                        <td># {count++}</td>
-                        <td>{jog.nome}</td>
-                        <td>{jog.idade} anos</td>
-                        <td>{jog.time}</td>
-                        <td>{jog.contratacao}</td>
-                        <td>{jog.demissao}</td>
-                        <td>
-                            <Button 
-                                type="button" 
-                                className="btn btn-default btn-sm"
-                            >
-                                <i className="fa fa-edit"></i>
-                            </Button>
-
-                            <Button 
-                                type="button" 
-                                className="btn btn-default btn-sm"
-                            >
-                                <i className="fa fa-trash"></i>
-                            </Button>
-                        </td>
-                    </Tr>
-                ))}
-            </>
-        );
-    }
+    //Monitorar mudança no campo Search e realizar filtragem do que esta sendo digitado
+    useEffect(() => {
+        setSearchFilterList(jogador.filter(jog => jog.nome.toLowerCase().includes(inputSearch.toLowerCase())));
+    }, [inputSearch]);
 
     return (
         <section>
@@ -91,7 +58,15 @@ function Listar() {
                             <div className="card-header">
                                 <div className="card-tools">
                                     <div className="input-group input-group-sm" style={{ width: 150 }}>
-                                        <input type="text" name="table_search" className="form-control float-right" placeholder="Search" />
+                                        <input
+                                            type="text"
+                                            name="table_search"
+                                            className="form-control float-right"
+                                            placeholder="Buscar jogador..."
+                                            value={inputSearch}
+                                            onChange={event => setInputSearch(event.target.value)}
+                                        />
+
                                         <div className="input-group-append">
                                             <button type="submit" className="btn btn-default"><i className="fas fa-search" /></button>
                                         </div>
@@ -113,7 +88,73 @@ function Listar() {
                                         </Tr>
                                     </thead>
                                     <tbody>
-                                        {renderTbodyLines()}
+                                        {load === true ? (
+                                            <Tr>
+                                                <td colSpan="7">Loading ...</td>
+                                            </Tr>
+                                        ) : (
+                                            inputSearch.length > 0 ? (
+
+                                                searchFilterList.length > 0 ? (
+                                                    searchFilterList.map((jog) => (
+                                                        <Tr key={jog.id}>
+                                                            <td># {count++}</td>
+                                                            <td>{jog.nome}</td>
+                                                            <td>{jog.idade} anos</td>
+                                                            <td>{jog.time}</td>
+                                                            <td>{jog.contratacao}</td>
+                                                            <td>{jog.demissao}</td>
+                                                            <td>
+                                                                <Button
+                                                                    type="button"
+                                                                    className="btn btn-default btn-sm"
+                                                                >
+                                                                    <i className="fa fa-edit"></i>
+                                                                </Button>
+        
+                                                                <Button
+                                                                    type="button"
+                                                                    className="btn btn-default btn-sm"
+                                                                >
+                                                                    <i className="fa fa-trash"></i>
+                                                                </Button>
+                                                            </td>
+                                                        </Tr>
+                                                    ))
+                                                ) : (
+                                                    <Tr>
+                                                        <td colSpan="7">Nenhum resgistro encontrado...</td>
+                                                    </Tr>
+                                                )
+                                                
+                                            ) : (
+                                                jogador.map((jog) => (
+                                                    <Tr key={jog.id}>
+                                                        <td># {count++}</td>
+                                                        <td>{jog.nome}</td>
+                                                        <td>{jog.idade} anos</td>
+                                                        <td>{jog.time}</td>
+                                                        <td>{jog.contratacao}</td>
+                                                        <td>{jog.demissao}</td>
+                                                        <td>
+                                                            <Button
+                                                                type="button"
+                                                                className="btn btn-default btn-sm"
+                                                            >
+                                                                <i className="fa fa-edit"></i>
+                                                            </Button>
+    
+                                                            <Button
+                                                                type="button"
+                                                                className="btn btn-default btn-sm"
+                                                            >
+                                                                <i className="fa fa-trash"></i>
+                                                            </Button>
+                                                        </td>
+                                                    </Tr>
+                                                ))
+                                            )
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
