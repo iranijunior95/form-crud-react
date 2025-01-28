@@ -1,0 +1,30 @@
+{
+    "jogador": [
+        {
+            "id": 1,
+            "nome": "Neymar",
+            "idade": 30,
+            "time": "Hl-Hilal Saudi",
+            "contratacao": "12-01-2021",
+            "demissao": "23-12-2024"
+        },
+
+        {
+            "id": 2,
+            "nome": "Messi",
+            "idade": 31,
+            "time": "Inter Miami",
+            "contratacao": "12-12-2022",
+            "demissao": "01-01-2025"
+        },
+
+        {
+            "id": 3,
+            "nome": "Cristiano Ronaldo",
+            "idade": 32,
+            "time": "Al-Nassr",
+            "contratacao": "02-02-2019",
+            "demissao": "23-10-2023"
+        }
+    ]
+}
